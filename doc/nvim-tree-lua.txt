@@ -220,6 +220,7 @@ Subsequent calls to setup will replace the previous configuration.
           glyphs = {
             default = "",
             symlink = "",
+            bookmark = "",
             folder = {
               arrow_closed = "",
               arrow_open = "",
@@ -1012,6 +1013,9 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
 `.`               run_file_command    enter vim command mode with the file the cursor is on
 `<C-k>`           toggle_file_info    toggle a popup with file infos about the file under the cursor
 `g?`              toggle_help         toggle help
+`ma`              add_mark            Bookmark a node
+`md`              remove_mark         Remove node from bookmarks
+`M`               toggle_mark         Toggle node in bookmarks
 
 >
   view.mappings.list = { -- BEGIN_DEFAULT_MAPPINGS
@@ -1059,6 +1063,9 @@ DEFAULT MAPPINGS                                     *nvim-tree-default-mappings
     { key = ".",                              action = "run_file_command" }
     { key = "<C-k>",                          action = "toggle_file_info" }
     { key = "g?",                             action = "toggle_help" }
+    { key = "ma",                             action = "add_mark" }
+    { key = "md",                             action = "remove_mark" }
+    { key = "M",                              action = "toggle_mark" }
   } -- END_DEFAULT_MAPPINGS
 <
 ==============================================================================

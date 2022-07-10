@@ -45,6 +45,11 @@ local Actions = {
   run_file_command = require("nvim-tree.actions.node.run-command").run_file_command,
   toggle_file_info = require("nvim-tree.actions.node.file-popup").toggle_file_info,
   system_open = require("nvim-tree.actions.node.system-open").fn,
+
+  -- mark
+  toggle_mark = require("nvim-tree.marks").toggle_mark,
+  add_mark = require("nvim-tree.marks").add_mark,
+  remove_mark = require("nvim-tree.marks").remove_mark,
 }
 
 local function handle_action_on_help_ui(action)

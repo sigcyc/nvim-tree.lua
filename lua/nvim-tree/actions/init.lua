@@ -227,6 +227,21 @@ local DEFAULT_MAPPINGS = {
     action = "toggle_help",
     desc = "toggle help",
   },
+  {
+    key = "ma",
+    action = "add_mark",
+    desc = "Bookmark a node",
+  },
+  {
+    key = "md",
+    action = "remove_mark",
+    desc = "Remove node from bookmarks",
+  },
+  {
+    key = "M",
+    action = "toggle_mark",
+    desc = "Toggle node in bookmarks",
+  },
 }
 -- END_DEFAULT_MAPPINGS
 
