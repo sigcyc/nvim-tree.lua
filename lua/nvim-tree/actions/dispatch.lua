@@ -3,54 +3,60 @@ local lib = require "nvim-tree.lib"
 
 local M = {}
 
-local Actions = {
-  close = view.close,
+local function create_actions(opts)
+  local a = {}
+
+  a.close = view.close
 
   -- Tree modifiers
-  collapse_all = require("nvim-tree.actions.tree-modifiers.collapse-all").fn,
-  expand_all = require("nvim-tree.actions.tree-modifiers.expand-all").fn,
-  toggle_dotfiles = require("nvim-tree.actions.tree-modifiers.toggles").dotfiles,
-  toggle_custom = require("nvim-tree.actions.tree-modifiers.toggles").custom,
-  toggle_git_ignored = require("nvim-tree.actions.tree-modifiers.toggles").git_ignored,
+  a.collapse_all = require("nvim-tree.actions.tree-modifiers.collapse-all").fn
+  a.expand_all = require("nvim-tree.actions.tree-modifiers.expand-all").fn
+  a.toggle_dotfiles = require("nvim-tree.actions.tree-modifiers.toggles").dotfiles
+  a.toggle_custom = require("nvim-tree.actions.tree-modifiers.toggles").custom
+  a.toggle_git_ignored = require("nvim-tree.actions.tree-modifiers.toggles").git_ignored
 
   -- Filesystem operations
-  copy_absolute_path = require("nvim-tree.actions.fs.copy-paste").copy_absolute_path,
-  copy_name = require("nvim-tree.actions.fs.copy-paste").copy_filename,
-  copy_path = require("nvim-tree.actions.fs.copy-paste").copy_path,
-  copy = require("nvim-tree.actions.fs.copy-paste").copy,
-  create = require("nvim-tree.actions.fs.create-file").fn,
-  cut = require("nvim-tree.actions.fs.copy-paste").cut,
-  full_rename = require("nvim-tree.actions.fs.rename-file").fn(true),
-  paste = require("nvim-tree.actions.fs.copy-paste").paste,
-  trash = require("nvim-tree.actions.fs.trash").fn,
-  remove = require("nvim-tree.actions.fs.remove-file").fn,
-  rename = require("nvim-tree.actions.fs.rename-file").fn(false),
+  a.copy_absolute_path = require("nvim-tree.actions.fs.copy-paste").copy_absolute_path
+  a.copy_name = require("nvim-tree.actions.fs.copy-paste").copy_filename
+  a.copy_path = require("nvim-tree.actions.fs.copy-paste").copy_path
+  a.copy = require("nvim-tree.actions.fs.copy-paste").copy
+  a.create = require("nvim-tree.actions.fs.create-file").fn
+  a.cut = require("nvim-tree.actions.fs.copy-paste").cut
+  a.full_rename = require("nvim-tree.actions.fs.rename-file").fn(true)
+  a.paste = require("nvim-tree.actions.fs.copy-paste").paste
+  a.trash = require("nvim-tree.actions.fs.trash").fn
+  a.remove = require("nvim-tree.actions.fs.remove-file").fn
+  a.rename = require("nvim-tree.actions.fs.rename-file").fn(false)
 
   -- Movements in tree
-  close_node = require("nvim-tree.actions.moves.parent").fn(true),
-  first_sibling = require("nvim-tree.actions.moves.sibling").fn(-math.huge),
-  last_sibling = require("nvim-tree.actions.moves.sibling").fn(math.huge),
-  next_diag_item = require("nvim-tree.actions.moves.item").fn("next", "diag"),
-  next_git_item = require("nvim-tree.actions.moves.item").fn("next", "git"),
-  next_sibling = require("nvim-tree.actions.moves.sibling").fn(1),
-  parent_node = require("nvim-tree.actions.moves.parent").fn(false),
-  prev_diag_item = require("nvim-tree.actions.moves.item").fn("prev", "diag"),
-  prev_git_item = require("nvim-tree.actions.moves.item").fn("prev", "git"),
-  prev_sibling = require("nvim-tree.actions.moves.sibling").fn(-1),
+  a.close_node = require("nvim-tree.actions.moves.parent").fn(true)
+  a.first_sibling = require("nvim-tree.actions.moves.sibling").fn(-math.huge)
+  a.last_sibling = require("nvim-tree.actions.moves.sibling").fn(math.huge)
+  a.next_diag_item = require("nvim-tree.actions.moves.item").fn("next", "diag")
+  a.next_git_item = require("nvim-tree.actions.moves.item").fn("next", "git")
+  a.next_sibling = require("nvim-tree.actions.moves.sibling").fn(1)
+  a.parent_node = require("nvim-tree.actions.moves.parent").fn(false)
+  a.prev_diag_item = require("nvim-tree.actions.moves.item").fn("prev", "diag")
+  a.prev_git_item = require("nvim-tree.actions.moves.item").fn("prev", "git")
+  a.prev_sibling = require("nvim-tree.actions.moves.sibling").fn(-1)
 
   -- Other types
-  refresh = require("nvim-tree.actions.reloaders.reloaders").reload_explorer,
-  dir_up = require("nvim-tree.actions.root.dir-up").fn,
-  search_node = require("nvim-tree.actions.finders.search-node").fn,
-  run_file_command = require("nvim-tree.actions.node.run-command").run_file_command,
-  toggle_file_info = require("nvim-tree.actions.node.file-popup").toggle_file_info,
-  system_open = require("nvim-tree.actions.node.system-open").fn,
+  a.refresh = require("nvim-tree.actions.reloaders.reloaders").reload_explorer
+  a.dir_up = require("nvim-tree.actions.root.dir-up").fn
+  a.search_node = require("nvim-tree.actions.finders.search-node").fn
+  a.run_file_command = require("nvim-tree.actions.node.run-command").run_file_command
+  a.toggle_file_info = require("nvim-tree.actions.node.file-popup").toggle_file_info
+  a.system_open = require("nvim-tree.actions.node.system-open").fn
 
   -- mark
-  toggle_mark = require("nvim-tree.marks").toggle_mark,
-  add_mark = require("nvim-tree.marks").add_mark,
-  remove_mark = require("nvim-tree.marks").remove_mark,
-}
+  if opts.renderer.marks.enable then
+    a.toggle_mark = require("nvim-tree.marks").toggle_mark
+    a.add_mark = require("nvim-tree.marks").add_mark
+    a.remove_mark = require("nvim-tree.marks").remove_mark
+  end
+
+  return a
+end
 
 local function handle_action_on_help_ui(action)
   if action == "close" or action == "toggle_help" then
@@ -89,7 +95,7 @@ local function handle_tree_actions(action)
   end
 
   local custom_function = M.custom_keypress_funcs[action]
-  local defined_action = Actions[action]
+  local defined_action = M.actions[action]
 
   if type(custom_function) == "function" then
     return custom_function(node)
@@ -124,8 +130,10 @@ function M.dispatch(action)
   end
 end
 
-function M.setup(custom_keypress_funcs)
+function M.setup(opts, custom_keypress_funcs)
   M.custom_keypress_funcs = custom_keypress_funcs
+
+  M.actions = create_actions(opts)
 end
 
 return M

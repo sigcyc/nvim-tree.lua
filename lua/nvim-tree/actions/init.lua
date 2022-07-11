@@ -351,6 +351,19 @@ local function cleanup_existing_mappings()
   end
 end
 
+local function create_mappings(opts)
+  local mappings = vim.deepcopy(DEFAULT_MAPPINGS)
+
+  if not opts.renderer.marks.enable then
+    for k, v in ipairs(mappings) do
+      if v.key == "ma" or v.key == "md" or v.key == "M" then
+        mappings[k] = nil
+      end
+    end
+  end
+  return mappings
+end
+
 local DEFAULT_MAPPING_CONFIG = {
   custom_only = false,
   list = {},
@@ -368,7 +381,7 @@ function M.setup(opts)
   require("nvim-tree.actions.tree-modifiers.expand-all").setup(opts)
 
   cleanup_existing_mappings()
-  M.mappings = vim.deepcopy(DEFAULT_MAPPINGS)
+  M.mappings = create_mappings(opts)
 
   local user_map_config = (opts.view or {}).mappings or {}
   local options = vim.tbl_deep_extend("force", DEFAULT_MAPPING_CONFIG, user_map_config)
@@ -378,7 +391,7 @@ function M.setup(opts)
     M.mappings = merge_mappings(options.list)
   end
 
-  require("nvim-tree.actions.dispatch").setup(M.custom_keypress_funcs)
+  require("nvim-tree.actions.dispatch").setup(opts, M.custom_keypress_funcs)
 
   log.line("config", "active mappings")
   log.raw("config", "%s\n", vim.inspect(M.mappings))

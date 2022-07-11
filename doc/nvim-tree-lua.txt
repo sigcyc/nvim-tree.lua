@@ -727,6 +727,9 @@ UI rendering setup
                   `ignored = "◌",`
                 `}`
 
+    *nvim-tree.marks*
+    Incomplete feature, not ready for use.
+
     *nvim-tree.renderer.special_files*
     A list of filenames that gets highlighted with `NvimTreeSpecialFile`.
       Type: `table`, Default: `{ "Cargo.toml", "Makefile", "README.md", "readme.md", }`

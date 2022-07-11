@@ -491,6 +491,9 @@ local DEFAULT_OPTS = { -- BEGIN_DEFAULT_OPTS
         },
       },
     },
+    marks = {
+      enable = false,
+    },
     special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
     symlink_destination = true,
   },
@@ -675,7 +678,9 @@ function M.setup(conf)
   require("nvim-tree.lib").setup(opts)
   require("nvim-tree.renderer").setup(opts)
   require("nvim-tree.live-filter").setup(opts)
-  require("nvim-tree.marks").setup(opts)
+  if opts.renderer.marks.enable then
+    require("nvim-tree.marks").setup(opts)
+  end
   if M.config.renderer.icons.show.file and pcall(require, "nvim-web-devicons") then
     require("nvim-web-devicons").setup()
   end
