@@ -246,6 +246,7 @@ function M.on_enter(netrw_disabled)
   if (_config.open_on_setup or _config.open_on_setup_file) and not should_be_preserved then
     if buf_is_dir or buf_is_empty then
       should_open = true
+      should_focus_other_window = true
     elseif is_file and _config.open_on_setup_file then
       should_open = true
       should_focus_other_window = true
