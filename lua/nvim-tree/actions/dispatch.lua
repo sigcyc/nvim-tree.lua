@@ -1,5 +1,8 @@
 local view = require "nvim-tree.view"
 local lib = require "nvim-tree.lib"
+local change_dir = require "nvim-tree.actions.root.change-dir"
+local utils = require "nvim-tree.utils"
+local core = require "nvim-tree.core"
 
 local M = {}
 
@@ -63,11 +66,28 @@ local function handle_filter_actions(action)
   end
 end
 
+local function clean_input_cwd(name)
+  local root_parent_cwd = vim.fn.fnamemodify(utils.path_remove_trailing(core.get_cwd()), ":h")
+  if name == ".." and root_parent_cwd then
+    return vim.fn.expand(root_parent_cwd)
+  else
+    return vim.fn.expand(name)
+  end
+end
+
+local function cd(path)
+  local foldername = clean_input_cwd(path)
+  vim.cmd("cd " .. vim.fn.fnameescape(foldername))
+  vim.cmd("let t:wd = getcwd()")
+end
+
 local function change_dir_action(node)
   if node.name == ".." then
     require("nvim-tree.actions.root.change-dir").fn ".."
+    cd("..")
   elseif node.nodes ~= nil then
     require("nvim-tree.actions.root.change-dir").fn(lib.get_last_group_node(node).absolute_path)
+    cd(lib.get_last_group_node(node).absolute_path)
   end
 end
 

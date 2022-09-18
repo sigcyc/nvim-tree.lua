@@ -89,8 +89,10 @@ end
 function M.open(cwd)
   cwd = cwd ~= "" and cwd or nil
   if view.is_visible() then
-    lib.set_target_win()
-    view.focus()
+    --lib.set_target_win()
+    --view.focus()
+    view.close()
+    lib.open(cwd)
   else
     lib.open(cwd)
   end
@@ -262,12 +264,12 @@ function M.on_enter(netrw_disabled)
     and not should_be_preserved
 
   -- Session that left a NvimTree Buffer opened, reopen with it
-  local existing_tree_wins = find_existing_windows()
-  if existing_tree_wins[1] then
-    api.nvim_set_current_win(existing_tree_wins[1])
-  end
+  --local existing_tree_wins = find_existing_windows()
+  --if existing_tree_wins[1] then
+    --api.nvim_set_current_win(existing_tree_wins[1])
+  --end
 
-  if should_open or should_hijack or existing_tree_wins[1] ~= nil then
+  if should_open or should_hijack then
     lib.open(cwd)
 
     if should_focus_other_window then

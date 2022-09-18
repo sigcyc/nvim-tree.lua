@@ -17,6 +17,7 @@ local function clean_input_cwd(name)
   end
 end
 
+
 local function is_window_event(new_tabpage)
   local is_event_scope_window = vim.v.event.scope == "window" or vim.v.event.changed_window
   return is_event_scope_window and new_tabpage == M.current_tab
@@ -49,6 +50,7 @@ end
 
 local function cd(global, path)
   vim.cmd((global and "cd " or "lcd ") .. vim.fn.fnameescape(path))
+  vim.cmd("let t:wd = getcwd()")
 end
 
 local function should_change_dir()
